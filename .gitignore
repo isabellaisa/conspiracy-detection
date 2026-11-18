@@ -1,0 +1,33 @@
+# Dataset e dati locali (modifica o aggiungi estensioni se necessario)
+cache/
+dataset/
+classification_results/
+dataset_metrics/
+hf_cache/
+nltk_data/
+old_classification_results/
+processed/
+tmp-ffmpeg-download/
+torchinductor_igugliel/
+corrupted_iframes.txt
+corrupted_videos.txt
+scripts/create_samples.py
+*.csv
+*.json
+*.parquet
+*.h5
+*.pkl
+
+# File di cache e compilati Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+#shell scripts SLURM
+*.sh
+
+# File di log SLURM
+*.out
+*.err
+logs/

@@ -1,0 +1,16 @@
+torch
+torchvision
+librosa
+accelerate
+bitsandbytes
+transformers
+path
+ffmpeg-python
+openai-whisper
+opencv-python
+scenedetect
+av
+pandas
+nltk
+tqdm
+matplotlib

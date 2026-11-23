@@ -12,7 +12,7 @@ torchinductor_igugliel/
 corrupted_iframes.txt
 corrupted_videos.txt
 scripts/create_samples.py
-*.csv
+
 *.json
 *.parquet
 *.h5

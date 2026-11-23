@@ -1,7 +1,7 @@
 # Dataset e dati locali (modifica o aggiungi estensioni se necessario)
 cache/
 dataset/
-classification_results/
+
 dataset_metrics/
 hf_cache/
 nltk_data/

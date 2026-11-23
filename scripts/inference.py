@@ -18,8 +18,9 @@ DATASET_METRICS = "/leonardo_work/IscrC_MARGOT/igugliel/dataset_metrics"
 
 PROBLEMS_LOG = "/leonardo_work/IscrC_MARGOT/igugliel/classification_results/problems.txt"
 #MODEL_ID = f"{os.environ['FAST']}/models/gemma-4-E4B-it" 
-MODEL_ID = "Qwen/Qwen3-VL-8B-Instruct"
-#MODEL_ID = "Qwen/Qwen3-VL-32B-Instruct"
+#MODEL_ID = "Qwen/Qwen3-VL-8B-Instruct"
+MODEL_ID = "Qwen/Qwen3-VL-32B-Instruct"
+#MODEL_ID = "google/gemma-4-31B-it"
 
 
 #TODO: sostituire iterazione su elenco transcript con iterazione su id validi
@@ -192,6 +193,19 @@ def it_classification(model, processor, keyframes_dir:Path, prompt:Prompt, datas
   problematic_videos=[]  
   results_file_path = Path(f"{dataset_paths.results}/classification_it_{prompt.prompt_type.value}_{keyframes_type}")
   
+  #hardcoded per ora. apri gli id dei video validi
+  # valid_ids_path = f"{DATASET_METRICS}/{dataset_paths.name}_ids"
+  # with open(valid_ids_path, "rb") as f:
+  #   valid_ids = set(pickle.load(f))
+
+  # #se esiste, apri il csv di classificazione e estrai gli id in un set
+  # if results_file_path.exists():
+  #   results_file = pd.read_csv(results_file_path, dtype={"video_id": str})
+  #   results_file["video_id"] = results_file['video_id'].str.strip().str.replace('\.mp4$','', regex=True)
+  #   ids = set(results_file.loc["video_id"])
+  #   ids_to_process = valid_ids - ids
+  # else:
+  #   ids_to_process = valid_ids
   
   for file in dataset_paths.transcript_timestamped.iterdir():
     
@@ -209,6 +223,8 @@ def it_classification(model, processor, keyframes_dir:Path, prompt:Prompt, datas
       print(f"problem with video {video_id} \n chat history passed: {ch}")
       print(e, flush=True)
       traceback.print_exc()
+      gc.collect()
+      torch.cuda.empty_cache()
       #problematic_videos.append(f"problem with {video_id} in image-transcript classification {prompt.prompt_type.value}")
       
   with open(PROBLEMS_LOG, "a") as f:
@@ -223,12 +239,11 @@ def it_classification(model, processor, keyframes_dir:Path, prompt:Prompt, datas
     # to be sure: cast video_id to string on both dataframes
     results_file = results_file.astype({"video_id":str})
     new_results = new_results.astype({"video_id":str})
-    df = results_file.merge(new_results, how="outer", on="video_id")
+    df = results_file.merge(new_results, how="inner", on="video_id")
   else:
     df = pd.DataFrame(classification, columns = ["video_id", f"classification_{model_name}"])
 
   df.to_csv(results_file_path, index = False)
-
 
 
 
@@ -280,9 +295,12 @@ def main():
     
 
   ).eval()
+  print(model.hf_device_map)
 
-  it_classification(model, processor, VIDEOS_SAMPLE_1000.shotbased, PROMPTS[1], VIDEOS_SAMPLE_1000, "qwen3VL_8BI")
-
+  it_classification(model, processor, VIDEOS_SAMPLE_1000.shotbased, PROMPTS[0], VIDEOS_SAMPLE_1000, "qwen3VL_32BI")
+  # ch = ChatHistory.init_chat_history_test("qual è la capitale dell'italia?")
+  # res = get_model_response(ch, model, processor)
+  # print(res)
 
   
 

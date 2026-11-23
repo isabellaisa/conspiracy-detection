@@ -1,4 +1,4 @@
-from igugliel.scripts.inference import video_classification, vt_classification, it_classification, it_concat_classification, transcript_classification
+from inference import video_classification, vt_classification, it_classification, it_concat_classification, transcript_classification
 from paths import DatasetPaths, MIXED_SAMPLE_1000, CT_VIDEOS, CT_NOVTT, VIDEOS_SAMPLE_1000
 from transformers import AutoProcessor, AutoModelForMultimodalLM
 from prompt import Prompt, SIMPLE_PROMPT, DEFINITION_PROMPT
@@ -57,14 +57,19 @@ def run_inference_chunked(dir: DatasetPaths, model_name:str, model_id:str, chunk
 
     problem_tasks = {
 
-        0: lambda: it_concat_classification(model, processor, dir.trnsntv2, dir.concat_trnsntv2, SIMPLE_PROMPT, dir, model_name),
-        1: lambda: it_concat_classification(model, processor, dir.trnsntv2, dir.concat_trnsntv2, DEFINITION_PROMPT, dir, model_name),
+        0: lambda: it_classification(model, processor, dir.trnsntv2, SIMPLE_PROMPT, dir, model_name),
+        1: lambda: it_classification(model, processor, dir.trnsntv2, DEFINITION_PROMPT, dir, model_name),
+        2:lambda: it_classification(model, processor, dir.shotbased, SIMPLE_PROMPT, dir, model_name) ,
+        3: lambda: it_classification(model, processor, dir.shotbased, DEFINITION_PROMPT, dir, model_name),
+        4: lambda: it_classification(model, processor, dir.iframes, SIMPLE_PROMPT, dir, model_name) ,
+        5: lambda: it_classification(model, processor, dir.iframes, DEFINITION_PROMPT, dir, model_name)
 
     }
 
+
     try :
-       # tasks[chunk_id]()
-        problem_tasks[chunk_id]()
+        tasks[chunk_id]()
+        #problem_tasks[chunk_id]()
     except torch.cuda.OutOfMemoryError:
        #log_failure(video_id, "oom")
        with open(OOM_LOG, "a") as p:
@@ -82,7 +87,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     DATASETS = {"VIDEOS_100": VIDEOS_SAMPLE_1000, "CT_NOVTT": CT_NOVTT}
-    dataset = DATASETS[args.dataset]
+    #dataset = DATASETS[args.dataset]
     MODELS = {
         "gemma4_E4B": f"{os.environ['FAST']}/models/gemma-4-E4B-it",
         "gemma4_31BIT": "google/gemma-4-31B-it", 
@@ -95,4 +100,4 @@ if __name__ == "__main__":
     model_id = MODELS[model_name]
     
     # model_name = "qwen3VL_32BI"
-    run_inference_chunked(dataset, model_name, model_id, chunk_id=args.chunk_id, num_chunks=args.num_chunks)
+    run_inference_chunked(VIDEOS_SAMPLE_1000, model_name, model_id, chunk_id=args.chunk_id, num_chunks=args.num_chunks)

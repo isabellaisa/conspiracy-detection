@@ -44,7 +44,7 @@ def build_concat(dir:DatasetPaths):
     
             concat_transcript_frames(iframes_ts, timestamped, save_path_iframes)
             concat_transcript_frames(shotbased_ts, timestamped, save_path_shotbased)
-            concat_transcript_frames(trnsntv2_ts, timestamped, save_path_trnsntv2)
+            #concat_transcript_frames(trnsntv2_ts, timestamped, save_path_trnsntv2)
             
         except Exception as e:
             print(e)
@@ -53,6 +53,6 @@ def build_concat(dir:DatasetPaths):
 if __name__ == "__main__":
 
     build_concat(CT_NOVTT)
-    build_concat(VIDEOS_SAMPLE_1000)
+    #build_concat(VIDEOS_SAMPLE_1000)
     
         

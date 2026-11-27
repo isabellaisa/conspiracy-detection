@@ -24,7 +24,8 @@ MODEL_ID = "Qwen/Qwen3-VL-32B-Instruct"
 
 
 #TODO: sostituire iterazione su elenco transcript con iterazione su id validi
-
+# NOTA: UN ALTRO MODO PER FORZARE UNA RISPOSTA BINARIA è IMPOSTARE MAX NEW TOKENS = 1. QUESTO PERO NON VA BENE SE 
+# DEVO GENERARE UN OUTPUT PIU COMPLESSO CON SPIEGAZIONI
 def get_model_response(chat_history, model, processor, metadata={}):
 
   inputs = processor.apply_chat_template(
